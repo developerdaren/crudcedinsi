@@ -1,6 +1,20 @@
 <?php
+
+session_start();
+if (!isset($_SESSION['usuario'])) {
+    header("Location: login.php");
+    exit();
+}
 include '../includes/conexion.php';
-$resultado = $conn->query("SELECT * FROM platos");
+
+
+try {
+    $stmt = $pdo->prepare("SELECT id, nombre, descripcion, precio FROM platos");
+    $stmt->execute();
+    $platos = $stmt->fetchAll(); // Obtiene todos los resultados como un array asociativo
+} catch (PDOException $e) {
+    die("Error al leer los platos: " . $e->getMessage());
+}
 ?>
 
 <!DOCTYPE html>
@@ -17,17 +31,21 @@ $resultado = $conn->query("SELECT * FROM platos");
         <tr>
             <th>Nombre</th><th>Descripción</th><th>Precio</th><th>Acciones</th>
         </tr>
-        <?php while ($fila = $resultado->fetch_assoc()): ?>
-        <tr>
-            <td><?= $fila['nombre'] ?></td>
-            <td><?= $fila['descripcion'] ?></td>
-            <td><?= $fila['precio'] ?></td>
-            <td>
-                <a href="editar.php?id=<?= $fila['id'] ?>" class="btn btn-warning btn-sm">Editar</a>
-                <a href="eliminar.php?id=<?= $fila['id'] ?>" class="btn btn-danger btn-sm">Eliminar</a>
-            </td>
-        </tr>
-        <?php endwhile; ?>
+        <?php if (!empty($platos)): ?>
+            <?php foreach ($platos as $plato): ?>
+            <tr>
+                <td><?= htmlspecialchars($plato['nombre']) ?></td>
+                <td><?= htmlspecialchars($plato['descripcion']) ?></td>
+                <td><?= htmlspecialchars($plato['precio']) ?></td>
+                <td>
+                    <a href="editar.php?id=<?= $plato['id'] ?>" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="eliminar.php?id=<?= $plato['id'] ?>" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <tr><td colspan="4">No hay platos registrados.</td></tr>
+        <?php endif; ?>
     </table>
     <a href="../dashboard.php" class="btn btn-secondary mt-3">Volver al Dashboard</a>
 <a href="../logout.php" class="btn btn-danger mt-3">Cerrar Sesión</a>

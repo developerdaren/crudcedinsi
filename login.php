@@ -6,14 +6,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
     $password = hash('sha256', $_POST['password']);
 
-    $sql = "SELECT * FROM usuarios WHERE username = '$username' AND password = '$password'";
-    $result = $conn->query($sql);
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE username = :username AND password = :password");
+        $stmt->bindParam(':username', $username, PDO::PARAM_STR);
+        $stmt->bindParam(':password', $password, PDO::PARAM_STR);
+        $stmt->execute();
+        $user = $stmt->fetch();
 
-    if ($result->num_rows == 1) {
-        $_SESSION['usuario'] = $username;
-        header("Location: dashboard.php");
-    } else {
-        $error = "Credenciales incorrectas";
+        if ($user) {
+            $_SESSION['usuario'] = $username;
+            header("Location: dashboard.php");
+            exit();
+        } else {
+            $error = "Credenciales incorrectas";
+        }
+
+    } catch (PDOException $e) {
+        $error = "Error al verificar las credenciales: " . $e->getMessage();
     }
 }
 ?>

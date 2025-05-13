@@ -1,11 +1,31 @@
 <?php
 include '../includes/conexion.php';
+
+session_start();
+if (!isset($_SESSION['usuario'])) {
+    header("Location: login.php");
+    exit();
+}
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nombre = $_POST['nombre'];
     $descripcion = $_POST['descripcion'];
     $precio = $_POST['precio'];
-    $conn->query("INSERT INTO platos (nombre, descripcion, precio) VALUES ('$nombre', '$descripcion', $precio)");
-    header("Location: leer.php");
+
+    try {
+        $stmt = $pdo->prepare("INSERT INTO platos (nombre, descripcion, precio) VALUES (:nombre, :descripcion, :precio)");
+        $stmt->bindParam(':nombre', $nombre, PDO::PARAM_STR);
+        $stmt->bindParam(':descripcion', $descripcion, PDO::PARAM_STR);
+        $stmt->bindParam(':precio', $precio, PDO::PARAM_STR); // O PDO::PARAM_INT si quieres asegurar que sea un número entero
+
+        $stmt->execute();
+
+        header("Location: leer.php");
+        exit();
+
+    } catch (PDOException $e) {
+        // Aquí puedes mostrar un mensaje de error más amigable o loguearlo
+        die("Error al crear el plato: " . $e->getMessage());
+    }
 }
 ?>
 
