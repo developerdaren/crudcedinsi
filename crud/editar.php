@@ -6,7 +6,7 @@ if (!isset($_SESSION['usuario'])) {
     header("Location: login.php");
     exit();
 }
-// Obtener el ID del plato a editar
+
 $id = $_GET['id'];
 
 try {
@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt_update = $pdo->prepare("UPDATE platos SET nombre = :nombre, descripcion = :descripcion, precio = :precio WHERE id = :id");
         $stmt_update->bindParam(':nombre', $nombre, PDO::PARAM_STR);
         $stmt_update->bindParam(':descripcion', $descripcion, PDO::PARAM_STR);
-        $stmt_update->bindParam(':precio', $precio, PDO::PARAM_STR); // O PDO::PARAM_INT
+        $stmt_update->bindParam(':precio', $precio, PDO::PARAM_STR); 
         $stmt_update->bindParam(':id', $id, PDO::PARAM_INT);
 
         $stmt_update->execute();

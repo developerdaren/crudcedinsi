@@ -13,7 +13,6 @@ if (isset($_GET['id'])) {
         exit();
 
     } catch (PDOException $e) {
-        // Aquí puedes mostrar un mensaje de error o loguearlo
         die("Error al eliminar el plato: " . $e->getMessage());
     }
 } else {

@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = $pdo->prepare("INSERT INTO platos (nombre, descripcion, precio) VALUES (:nombre, :descripcion, :precio)");
         $stmt->bindParam(':nombre', $nombre, PDO::PARAM_STR);
         $stmt->bindParam(':descripcion', $descripcion, PDO::PARAM_STR);
-        $stmt->bindParam(':precio', $precio, PDO::PARAM_STR); // O PDO::PARAM_INT si quieres asegurar que sea un número entero
+        $stmt->bindParam(':precio', $precio, PDO::PARAM_STR); 
 
         $stmt->execute();
 
@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
 
     } catch (PDOException $e) {
-        // Aquí puedes mostrar un mensaje de error más amigable o loguearlo
+        
         die("Error al crear el plato: " . $e->getMessage());
     }
 }

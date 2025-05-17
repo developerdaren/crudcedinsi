@@ -11,7 +11,7 @@ include '../includes/conexion.php';
 try {
     $stmt = $pdo->prepare("SELECT id, nombre, descripcion, precio FROM platos");
     $stmt->execute();
-    $platos = $stmt->fetchAll(); // Obtiene todos los resultados como un array asociativo
+    $platos = $stmt->fetchAll(); 
 } catch (PDOException $e) {
     die("Error al leer los platos: " . $e->getMessage());
 }
